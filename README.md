@@ -1,2 +1,5 @@
-# project-manager-web
-teste
+## Inicializar aplicação
+
+### `npm start`
+
+

@@ -24,8 +24,6 @@ class ModalForm extends Component {
       let button = ''
       let title = ''
 
-      console.log('label>', label)
-
       if(label === 'Editar'){
         button = <Button
                   color="warning"

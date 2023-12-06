@@ -3,6 +3,8 @@ import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import SelectMenu from '../../../Components/selectMenu';
 import ProjetoService from '../../../services/projetoService'
 import PessoaService from '../../../services/pessoaService'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 class AddEditForm extends React.Component {
@@ -16,7 +18,7 @@ class AddEditForm extends React.Component {
             dataFim: '',
             descricao: '',
             status: '',
-            orcamento: '',
+            orcamento: 0,
             risco: '',
             gerente: '',
             gerentes: [],
@@ -28,31 +30,27 @@ class AddEditForm extends React.Component {
       }
 
   handleChangeDate(event) {
-    console.log("name>>>", event.target.name)
-    console.log("value>>>", event.target.value)
     this.setState({
       [event.target.name]: event.target.value
     });
   }
 
   onChange = (e) => {
-    console.log('e.target.name', e.target.name)
-    console.log('e.target.value', e.target.value)
     this.setState({[e.target.name]: e.target.value})
   }
 
   submitFormAdd = e => {
     e.preventDefault()
     this.service.inserir({
-      nome: this.nome,
-      dataInicio: this.dataInicio,
-      dataPrevisao: this.dataPrevisao,
-      dataFim: this.dataFim,
-      descricao: this.descricao,
-      status: this.status,
-      orcamento: this.orcamento,
-      risco: this.risco,
-      gerente: this.state.gerente
+      nome: this.state.nome,
+      dataInicio: this.state.dataInicio,
+      dataPrevisao: this.state.dataPrevisao,
+      dataFim: this.state.dataFim,
+      descricao: this.state.descricao,
+      status: this.state.status,
+      orcamento: this.state.orcamento,
+      risco: this.state.risco,
+      gerente: { id: this.state.gerente }
    
     }).then(response => response.json())
       .then(item => {
@@ -64,7 +62,15 @@ class AddEditForm extends React.Component {
         }
       })
       .catch(err => console.log(err))
+
+      this.showToastMessage('Registro salvo com sucesso!')
   }
+
+  showToastMessage = (e) => {
+    toast.success(e, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  };
 
   submitFormEdit = e => {
     e.preventDefault()
@@ -78,7 +84,7 @@ class AddEditForm extends React.Component {
         status: this.state.status,
         orcamento: this.state.orcamento,
         risco: this.state.risco,
-        gerente: { id: this.state.gerente.id}
+        gerente: this.state.gerente
     }).then(response => response.json())
       .then(item => {
         if(Array.isArray(item)) {
@@ -89,10 +95,12 @@ class AddEditForm extends React.Component {
         }
       })
       .catch(err => console.log(err))
+
+      this.showToastMessage('Registro editado com sucesso!')
+
   }
 
   popularComboGerentes(){
-    console.log('popular>>', this.state.gerentes)
     if(this.state.comboGerentes <= 0) {
       this.state.gerentes.forEach(element => {
         this.state.comboGerentes.push({label: element.nome, value: element.id})
@@ -108,7 +116,14 @@ class AddEditForm extends React.Component {
       })
       .catch(err => console.log(err))
 
-  };
+  }
+
+  converter(valor){
+    if (valor > 0) {
+    var numero = parseFloat(valor).toLocaleString('pt-BR',{ style: 'currency', currency: 'BRL' });
+    document.getElementById('orcamento').value = numero;
+    }
+  }
 
   componentDidMount(){
     if(this.props.item){
@@ -142,13 +157,12 @@ class AddEditForm extends React.Component {
     const risco = this.service.getRisco();
     const status = this.service.getStatus();
     this.popularComboGerentes()
-    console.log('this.state.gerente>>', this.state.gerente)
 
     return (      
       <Form onSubmit={this.props.item ? this.submitFormEdit : this.submitFormAdd}>
         <FormGroup>
           <Label for="nome">Nome</Label>
-          <Input type="text" name="nome" id="nome" onChange={this.onChange} value={this.state.nome === null ? '' : this.state.nome} />
+          <Input type="text" name="nome" id="nome" onChange={this.onChange} value={this.state.nome} />
         </FormGroup>
         <FormGroup>
           <Label for="dataInicio">Data de Início</Label>
@@ -181,7 +195,9 @@ class AddEditForm extends React.Component {
         </FormGroup>
         <FormGroup>
           <Label for="orcamento">Orçamento</Label>
-          <Input type="text" name="orcamento" id="orcamento" onChange={this.onChange} value={this.state.orcamento === null ? '' : this.state.orcamento} />
+          <Input type="text" name="orcamento" id="orcamento" 
+                 onInput={this.converter(this.state.orcamento)} 
+                 onChange={this.onChange} value={this.state.orcamento === null ? '' : this.state.orcamento} />
         </FormGroup>
       
         <FormGroup htmlFor="inputRisco" Label="Risco">
@@ -198,7 +214,8 @@ class AddEditForm extends React.Component {
                       onChange={this.onChange} />
          </FormGroup>
         
-        <Button>Submit</Button>
+        <Button>Salvar</Button>
+        <ToastContainer style={{ width: "Auto" }} limit={1}/>
       </Form>
     );
   }
