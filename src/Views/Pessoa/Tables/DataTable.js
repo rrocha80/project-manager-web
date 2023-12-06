@@ -3,12 +3,26 @@ import { Table, Button, Input } from 'reactstrap'
 import ModalForm from '../Modals/Modal'
 import { cpfMask } from '../../../Utils/mask';
 import PessoaService from '../../../services/pessoaService'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 class DataTable extends Component {
   constructor(){
     super();
     this.service = new PessoaService();
+  }
+
+  showSuccesstMessage = (e) => {
+    toast.success(e, {
+      position: toast.POSITION.TOP_RIGHT,
+    })
+  }
+
+  showErrorMessage = (e) => {
+    toast.error(e, {
+      position: toast.POSITION.TOP_RIGHT,
+    })
   }
 
   deleteItem = id => {
@@ -19,9 +33,10 @@ class DataTable extends Component {
         .then(response => response.data)
         .then(  
             item => {
-                this.props.deleteItemFromState(id)
+                this.props.deleteItemFromState(id);
+                this.showSuccesstMessage('Registro removido com sucesso!')
         })
-        .catch(err => console.log(err))
+        .catch(err => this.showErrorMessage(err.response.data))
     }
 
   }
@@ -44,6 +59,7 @@ class DataTable extends Component {
               <ModalForm buttonLabel="Editar" item={item} updateState={this.props.updateState}/>
               {' '}
               <Button color="danger" onClick={() => this.deleteItem(item.id)}>Remover</Button>
+              <ToastContainer style={{ width: "Auto" }} limit={1} /> 
             </div>
           </td>
         </tr>

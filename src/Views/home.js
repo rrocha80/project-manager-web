@@ -7,7 +7,6 @@ class Home extends React.Component{
                 <div className="jumbotron">
                   <h1 className="display-3">Bem vindo!</h1>
                   <p className="lead">Esse é seu sistema de gerenciamento de projetos.</p>
-
                 </div>
             </div>
             

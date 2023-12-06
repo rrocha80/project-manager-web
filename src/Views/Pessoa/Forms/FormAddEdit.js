@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import PessoaService from '../../../services/pessoaService';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 class AddEditForm extends React.Component {
@@ -17,6 +19,13 @@ class AddEditForm extends React.Component {
         this.handleChangeDate = this.handleChangeDate.bind(this);
         this.service = new PessoaService();
       }
+  
+  showToastMessage = (e) => {
+    console.log('FormAdd')
+    toast.success(e, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  };
 
   setGerente = (e) => {
     const teste = document.getElementById(e.target.name).checked;
@@ -29,14 +38,12 @@ class AddEditForm extends React.Component {
   } 
 
   handleChangeDate(event) {
-    console.log("event", this.state.dataNascimento)
     this.setState({
       dataNascimento: event.target.value
     });
   }
 
   onChange = (e) => {
-    console.log('value>> ', e.target.value)
     this.setState({[e.target.name]: e.target.value})
   }
 
@@ -44,7 +51,7 @@ class AddEditForm extends React.Component {
     e.preventDefault()
     this.service.inserir({
         nome: this.state.nome,
-        cpf: this.state.cpf,
+        cpf: this.state.cpf.replace('-', '').replace('.', '').replace('.', '').trim(),
         dataNascimento: this.state.dataNascimento,
         funcionario: this.state.funcionario,
         gerente: this.state.gerente
@@ -59,6 +66,8 @@ class AddEditForm extends React.Component {
         }
       }).catch(err => console.log(err))
 
+      this.showToastMessage('Registro salvo com sucesso!')
+
   }
 
   submitFormEdit = e => {
@@ -66,7 +75,7 @@ class AddEditForm extends React.Component {
     this.service.atualizar({
         id: this.state.id,
         nome: this.state.nome,
-        cpf: this.state.cpf,
+        cpf: this.state.cpf.replace('-', '').replace('.', '').replace('.', '').trim(),
         dataNascimento: this.state.dataNascimento,
         funcionario: this.state.funcionario,
         gerente: this.state.gerente
@@ -82,6 +91,7 @@ class AddEditForm extends React.Component {
       })
       .catch(err => console.log(err))
 
+      this.showToastMessage('Registro editado com sucesso!')
   }
 
   componentDidMount(){
@@ -107,7 +117,6 @@ class AddEditForm extends React.Component {
           <Input name="dataNascimento" id="dataNascimento" type="date"
                     onChange={this.handleChangeDate}
                     value={this.state.dataNascimento} 
-                    //onSelect={this.state.dataNascimento}
                     />
         </FormGroup>
         <FormGroup>
@@ -126,7 +135,8 @@ class AddEditForm extends React.Component {
                  onChange={e => this.setGerente(e)}
                  value={this.state.gerente}  />
         </FormGroup>
-        <Button>Submit</Button>
+        <Button >Salvar</Button>
+        <ToastContainer style={{ width: "Auto" }} limit={1} />
       </Form>
     );
   }

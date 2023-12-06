@@ -23,6 +23,7 @@ class ProjetoService extends ApiService{
 
     getRisco(){ 
         return [
+            { label: '--Selecione--', value: '' },
             { label: 'Baixo', value: 'BAIXO_RISCO' },
             { label: 'Médio', value: 'MEDIO_RISCO' },
             { label: 'Alto', value: 'ALTO_RISCO' },
@@ -31,6 +32,7 @@ class ProjetoService extends ApiService{
 
     getStatus(){ 
         return [
+            { label: '--Selecione--', value: '' },
             { label: 'Em análise', value: 'EM_ANALISE' },
             { label: 'Análise realizada', value: 'ANALISE_REALIZADA' },
             { label: 'Análise aprovada', value: 'ANALISE_APROVADA' },
